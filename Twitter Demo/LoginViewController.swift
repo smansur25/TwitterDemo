@@ -2,7 +2,7 @@
 //  LoginViewController.swift
 //  Twitter Demo
 //
-//  Created by Nusrat Akhter on 2/29/16.
+//  Created by Sumaiya Mansur on 2/29/16.
 //  Copyright © 2016 Pearsman. All rights reserved.
 //
 
@@ -26,6 +26,7 @@ class LoginViewController: UIViewController {
     @IBAction func onLoginButton(sender: AnyObject) {
         TwitterClient.sharedInstance.login({ () -> () in
            self.performSegueWithIdentifier("LoginSegue", sender: nil)
+            
             
             }) { (error: NSError) -> () in
                 print("Error: \(error.localizedDescription)")

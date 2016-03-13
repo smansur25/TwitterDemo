@@ -2,7 +2,7 @@
 //  TwitterClient.swift
 //  Twitter Demo
 //
-//  Created by Nusrat Akhter on 3/2/16.
+//  Created by Sumaiya Mansur on 3/2/16.
 //  Copyright © 2016 Pearsman. All rights reserved.
 //
 
@@ -10,7 +10,7 @@ import UIKit
 import BDBOAuth1Manager
 
 class TwitterClient: BDBOAuth1SessionManager {
-    
+        
     static let sharedInstance = TwitterClient(baseURL: NSURL(string: "https://api.twitter.com")!, consumerKey: "K0Y1t8w60ftP9UAA7L0AYXiJ8", consumerSecret: "XDdHHJjG6kzUC5xDyrrVLTjeFrI9373hA0hKbd5YNHlh0pUjKO")
     
     var loginSuccess: (() -> ())?
@@ -31,6 +31,12 @@ class TwitterClient: BDBOAuth1SessionManager {
                 self.loginFailure?(error)
         }
 }
+    func logout() {
+        User.currentUser = nil
+        deauthorize()
+        NSNotificationCenter.defaultCenter().postNotificationName(User.userDidLogoutNotification, object: nil)
+    }
+    
     func handleOpenUrl(url: NSURL) {
         let requestToken = BDBOAuth1Credential(queryString: url.query)
         
@@ -38,9 +44,10 @@ class TwitterClient: BDBOAuth1SessionManager {
             
             self.credentials({ (user: User) -> () in
                  self.loginSuccess?()
-                User.credentials = user
+                User.currentUser = user
                 }, faliure: { (error: NSError) -> () in
-                     self.loginFailure?(error)
+                    
+                    self.loginFailure?(error)
             })
             
             }) { (error: NSError!) -> Void in
@@ -58,14 +65,14 @@ class TwitterClient: BDBOAuth1SessionManager {
             let tweets = Twitter.tweetsWithArray(dictionaries)
            
                 success(tweets)
-            
+            print("tweets")
             }, failure: { (task: NSURLSessionDataTask?, error:NSError) -> Void in
                 
                 failure(error)
         })
         }
     
-    func credentials(success: (user) -> (), faliure: (NSError) -> ()) {
+    func credentials(success: (User) -> (), faliure: (NSError) -> ()) {
         
         GET("1.1/account/verify_credentials.json", parameters: nil, progress: nil, success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
             
@@ -75,6 +82,7 @@ class TwitterClient: BDBOAuth1SessionManager {
             success(user)
             
             }, failure: { (task: NSURLSessionDataTask?, error:NSError) -> Void in
+            
                 
         })
         

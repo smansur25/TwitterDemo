@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Twitter Demo
 //
-//  Created by Nusrat Akhter on 2/29/16.
+//  Created by Sumaiya Mansur on 2/29/16.
 //  Copyright © 2016 Pearsman. All rights reserved.
 //
 
@@ -19,8 +19,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         if User.currentUser != nil {
+         print("Someone is in the house")
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewControllerWithIdentifier("TweetsNavigationController")
+            window?.rootViewController = vc
+        }
+        NSNotificationCenter.defaultCenter().addObserverForName(User.userDidLogoutNotification, object: nil , queue: NSOperationQueue.mainQueue()) { (NSNotification) -> Void in
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateInitialViewController()
+            self.window?.rootViewController = vc
+
             
         }
+        
         return true
     }
 
@@ -48,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(app: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
         
         TwitterClient.sharedInstance.handleOpenUrl(url)
+        print("hello")
         
         
         return true

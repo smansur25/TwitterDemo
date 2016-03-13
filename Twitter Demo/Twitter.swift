@@ -2,14 +2,17 @@
 //  Twitter.swift
 //  Twitter Demo
 //
-//  Created by Nusrat Akhter on 3/1/16.
+//  Created by Sumaiya Mansur on 3/1/16.
 //  Copyright © 2016 Pearsman. All rights reserved.
 //
 
 import UIKit
 
 class Twitter: NSObject {
-    var text: NSString?
+    
+
+    var user: User?
+    var text: String?
     var timestamp: NSDate?
     var retweetCount: Int = 0
     var followersCount: Int = 0
@@ -17,14 +20,14 @@ class Twitter: NSObject {
     var friendsCount: Int = 0
     
     init(dictionary: NSDictionary) {
-        text = dictionary["name"] as? String
+        text = dictionary["text"] as? String
         retweetCount = (dictionary["retweet_count"] as! Int) ?? 0
         followersCount = (dictionary["followers_count"] as? Int) ?? 0
         favCount = (dictionary["favourites_count"] as? Int) ?? 0
         friendsCount = (dictionary["friends_count"] as? Int) ?? 0
-        
+        user = User(dictionary: dictionary ["user"] as! NSDictionary)
+     
         let timestampString = dictionary["created_at"] as? String
-        
         if let timestampString = timestampString {
         let formatter = NSDateFormatter()
         formatter.dateFormat = "EEE MMM d HH:mm:ss: Z y"
@@ -39,7 +42,6 @@ class Twitter: NSObject {
         for dictionary in dictionaries {
             let tweet = Twitter(dictionary: dictionary)
             tweets.append(tweet)
-            
         }
         
         return tweets

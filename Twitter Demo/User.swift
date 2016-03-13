@@ -2,20 +2,21 @@
 //  User.swift
 //  Twitter Demo
 //
-//  Created by Nusrat Akhter on 3/1/16.
+//  Created by Sumaiya Mansur on 3/1/16.
 //  Copyright © 2016 Pearsman. All rights reserved.
 //
 
 import UIKit
 
 class User: NSObject {
-    var name: NSString?
-    var screenname:NSString?
+    var name: String?
+    var screenname:String?
     var profileUrl: NSURL?
-    var tagline: NSString?
+    var tagline: String?
     var followersCount: Int = 0
     var favouritesCount: Int = 0
     var friendsCount: Int = 0
+    var retweetCount: Int = 0
     var dictionary: NSDictionary?
     
     init(dictionary: NSDictionary) {
@@ -25,15 +26,15 @@ class User: NSObject {
         followersCount = (dictionary["friends_count"] as? Int) ?? 0
         favouritesCount = (dictionary["favourites_count"] as? Int) ?? 0
         friendsCount = (dictionary["friends_count"] as? Int) ?? 0
+        retweetCount = (dictionary["retweet_count"] as? Int) ?? 0
+        tagline = dictionary["description"] as? String
         let profileUrlString = dictionary["profile_image_url_https"] as? String
         if let profileUrlString = profileUrlString {
             profileUrl = NSURL (string: profileUrlString)
         }
-        
-        tagline = dictionary["description"] as? String
-        
+        }
+    static let userDidLogoutNotification = "UserDidLogout"
 
-}
     static  var _currentUser: User?
     
     
@@ -44,7 +45,7 @@ class User: NSObject {
             let defaults = NSUserDefaults.standardUserDefaults()
             let userData = defaults.objectForKey("currentUserData") as? NSData
             if let userData = userData {
-                let dictionary = try! NSJSONSerialization.dataWithJSONObject(userData, options: []) as! NSDictionary
+                let dictionary = try! NSJSONSerialization.JSONObjectWithData(userData, options: []) as! NSDictionary
                   _currentUser = User(dictionary: dictionary)
                 }
         }
